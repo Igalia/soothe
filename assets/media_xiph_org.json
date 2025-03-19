@@ -1,0 +1,30 @@
+{
+  "name": "media.xiph.org",
+  "description": "Xiph.org Video Test Media [derf's collection]",
+  "assets": [
+    {
+      "name": "blue_sky",
+      "source": "https://media.xiph.org/video/derf/y4m/blue_sky_1080p25.y4m",
+      "checksum": "a4ef8836e546bbef4276346d0b86e81b",
+      "filename": "blue_sky_1080p25.y4m"
+    },
+    {
+      "name": "four_people",
+      "source": "https://media.xiph.org/video/derf/y4m/FourPeople_1280x720_60.y4m",
+      "checksum": "83a3c203dc86fe8ecaa9010ad59f5757",
+      "filename": "FourPeople_1280x720_60.y4m"
+    },
+    {
+      "name": "riverbed",
+      "source": "https://media.xiph.org/video/derf/y4m/riverbed_1080p25.y4m",
+      "checksum": "9aeb08e3fe02e61d4a1b38be254ef293",
+      "filename": "riverbed_1080p25.y4m"
+    },
+    {
+      "name": "station2",
+      "source": "https://media.xiph.org/video/derf/y4m/station2_1080p25.y4m",
+      "checksum": "06be985bf3c2d986ecda3a331928da69",
+      "filename": "station2_1080p25.y4m"
+    }
+  ]
+}
