@@ -101,3 +101,62 @@ class GStreamerVaH264HighEncoder(GStreamer):
     encoder_bin = " vah264enc ! video/x-h264, profile=high "
     variant = "high"
     api = "VA"
+
+
+@register_encoder
+class GStreamerVaH264ConstrainedEncoder(GStreamer):
+    """GStreamer H.264 Constrained baseline VA encoder"""
+    codec = Codec.H264
+    encoder_bin = " vah264enc ! video/x-h264, profile=constrained-baseline "
+    variant = "constrained-baseline"
+    api = "VA"
+
+@register_encoder
+class GStreamerVaH264LpMainEncoder(GStreamer):
+    """GStreamer H.264 low power Main VA encoder"""
+    codec = Codec.H264
+    encoder_bin = " vah264lpenc ! video/x-h264, profile=main "
+    variant = "lp-main"
+    api = "VA"
+
+@register_encoder
+class GStreamerVaH264LpHighEncoder(GStreamer):
+    """GStreamer H.264 low power High VA encoder"""
+    codec = Codec.H264
+    encoder_bin = " vah264lpenc ! video/x-h264, profile=high "
+    variant = "lp-high"
+    api = "VA"
+
+
+@register_encoder
+class GStreamerVaH264LpConstrainedEncoder(GStreamer):
+    """GStreamer H.264 low power Constrained baseline VA encoder"""
+    codec = Codec.H264
+    encoder_bin = " vah264lpenc ! video/x-h264, profile=constrained-baseline "
+    variant = "lp-constrained-baseline"
+    api = "VA"
+
+@register_encoder
+class GStreamerVaH265MainEncoder(GStreamer):
+    """GStreamer H.265 Main VA encoder"""
+    codec = Codec.H265
+    encoder_bin = " vah265enc ! video/x-h265, profile=main "
+    variant = "main"
+    api = "VA"
+
+@register_encoder
+class GStreamerVaH265LpMainEncoder(GStreamer):
+    """GStreamer H.265 low power Main VA encoder"""
+    codec = Codec.H265
+    encoder_bin = " vah265lpenc ! video/x-h265, profile=main "
+    variant = "lp-main"
+    api = "VA"
+
+
+@register_encoder
+class GStreamerVaVp9LpEncoder(GStreamer):
+    """GStreamer VP9 low power VA encoder"""
+    codec = Codec.VP9
+    encoder_bin = " vavp9lpenc ! video/x-vp9 "
+    variant = "lp"
+    api = "VA"
