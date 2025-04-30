@@ -11,7 +11,7 @@ measure the transcoded videos.
 ### Clone the repository
 
 ```sh
-git clone XXX
+git clone https://github.com/Igalia/soothe
 cd soothe
 ```
 
