@@ -11,6 +11,8 @@ VMAF_DIR="${BASE_DIR}/../resources"
 WGET=$(which wget | head)
 [[ -f ${WGET} && -x ${WGET} ]] || (>&2 echo "This script needs `wget` command"; exit 255)
 
+[[ -e "$VMAF_DIR" ]] || mkdir -p "$VMAF_DIR"
+
 cd ${VMAF_DIR}
 if ${WGET} --no-config ${VMAF_URL}; then
     chmod +x ./vmaf
