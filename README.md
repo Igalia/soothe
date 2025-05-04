@@ -26,7 +26,7 @@ sudo dnf install vmaf vmaf-models
 Otherwise, you can download the binary via a script:
 
 ```
-scritps/download_vmaf.sh
+scripts/download_vmaf.sh
 ```
 
 ### Download assets
