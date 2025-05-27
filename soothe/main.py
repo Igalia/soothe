@@ -27,7 +27,7 @@ import sys
 from typing import Any
 from tempfile import gettempdir
 
-from soothe.soothe import RunParams, Soothe
+from .soothe import RunParams, Soothe
 
 APPNAME = "soothe"
 ASSETS_DIR = "assets"
@@ -35,17 +35,21 @@ RESOURCES_DIR = "resources"
 OUTPUT_DIR = "soothe_output"
 ENCODERS_DIR = "encoders"
 
+
 def soothe_main() -> None:
     """Entry point for the application"""
     main = Main()
     main.run()
 
-class Main: # pylint: disable=too-few-public-methods
+
+class Main:  # pylint: disable=too-few-public-methods
     """Main class for Soothe"""
 
     def __init__(self) -> None:
-        self.assets_dir = os.path.join(os.path.dirname(__file__), '..', ASSETS_DIR)
-        self.resources_dir = os.path.join(os.path.dirname(__file__), '..', RESOURCES_DIR)
+        self.assets_dir = os.path.join(os.path.dirname(__file__), '..',
+                                       ASSETS_DIR)
+        self.resources_dir = os.path.join(os.path.dirname(__file__), '..',
+                                          RESOURCES_DIR)
         self.output_dir = os.path.join(gettempdir(), OUTPUT_DIR)
 
         self.args = self._create_argument_parser()
@@ -63,7 +67,6 @@ class Main: # pylint: disable=too-few-public-methods
             args.func(args, soothe)
         else:
             self.args.print_help()
-
 
     def _create_argument_parser(self) -> argparse.ArgumentParser:
         parser = argparse.ArgumentParser()
@@ -216,14 +219,15 @@ class Main: # pylint: disable=too-few-public-methods
         subparser.add_argument(
             '-th',
             '--threshold',
-            help='set exit code to 2 if threshold tests are not success. Otherwise, exit code is 0',
+            help='set exit code to 2 if threshold tests are not success. '
+            'Otherwise, exit code is 0',
             type=int,
         )
         subparser.add_argument(
             '-tth',
             '--time-threshold',
-            help='set exit code to 3 if asset lists takes longer than threshold seconds. '\
-            'Otherwise, exit code is 0',
+            help='set exit code to 3 if asset lists takes longer than '
+            'threshold seconds. Otherwise, exit code is 0',
             type=float,
         )
         subparser.add_argument(
@@ -254,7 +258,8 @@ class Main: # pylint: disable=too-few-public-methods
             type=int,
             default=1,
         )
-        subparser.add_argument('--asset-lists', help='asset lists to download', nargs='*')
+        subparser.add_argument('--asset-lists', help='asset lists to download',
+                               nargs='*')
         subparser.set_defaults(func=self._download_cmd)
 
     @staticmethod

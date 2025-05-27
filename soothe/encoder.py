@@ -24,8 +24,9 @@ from functools import lru_cache
 from shutil import which
 from typing import List, Type
 
-from soothe.codec import Codec
-from soothe.utils import NamedClass, normalize_binary_cmd
+from .codec import Codec
+from .utils import NamedClass, normalize_binary_cmd
+
 
 class Encoder(NamedClass):
     """Abstract base class for encoders"""
@@ -70,6 +71,7 @@ class Encoder(NamedClass):
 
 
 ENCODERS: List[Encoder] = []
+
 
 def register_encoder(cls: Type[Encoder]) -> Type[Encoder]:
     """Register a new decoder implementation"""

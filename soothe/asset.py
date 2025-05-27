@@ -21,6 +21,7 @@
 
 from typing import Any, Type
 
+
 class Asset:
     """Asset class"""
 
@@ -39,7 +40,6 @@ class Asset:
 
         # Not in JSON
         self.test_time = 0.0
-
 
     @classmethod
     def from_json(cls: Type["Asset"], data: Any) -> Any:

@@ -21,6 +21,7 @@
 
 from enum import Enum
 
+
 class Codec(Enum):
     """Codec type"""
 

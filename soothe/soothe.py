@@ -27,17 +27,18 @@ from pathlib import Path
 from shutil import which
 from typing import Iterator, List, Optional, Tuple
 
-from soothe.asset import Asset
-from soothe.asset_list import AssetList
-from soothe.encoder import ENCODERS
-from soothe.test_suite import TestSuite, Params as TestSuiteParams
-from soothe.utils import get_matches_from_list
+from .asset import Asset
+from .asset_list import AssetList
+from .encoder import ENCODERS
+from .test_suite import TestSuite, Params as TestSuiteParams
+from .utils import get_matches_from_list
 
 # Import decoders that will auto-register
-from soothe.encoders import * # noqa: F403 pylint: disable=wildcard-import disable=unused-wildcard-import
+from .encoders import *  # noqa: F401,F403,E501 pylint: disable=wildcard-import disable=unused-wildcard-import
+
 
 @dataclass
-class RunParams: # pylint: disable=too-many-instance-attributes
+class RunParams:  # pylint: disable=too-many-instance-attributes
     """Context for run command"""
     jobs: int
     asset_lists_names: List[str]
@@ -51,9 +52,9 @@ class RunParams: # pylint: disable=too-many-instance-attributes
     threshold: Optional[int] = None
     time_threshold: Optional[int] = None
     verbose: bool = False
-    #summary: bool = False
-    #summary_output: str
-    #summary_formart: str
+    # summary: bool = False
+    # summary_output: str
+    # summary_formart: str
 
     def as_test_suite_params(
             self,
@@ -66,18 +67,19 @@ class RunParams: # pylint: disable=too-many-instance-attributes
         """Convert RunParams TestSuiteParams"""
 
         return TestSuiteParams(
-            name = name,
-            jobs = self.jobs,
-            assets = assets,
-            timeout = self.timeout,
-            fail_fast = self.fail_fast,
-            quiet = self.quiet,
-            vmaf_binary = vmaf_binary,
-            resources_dir = resources_dir,
-            output_dir = output_dir,
-            keep_files = self.keep_files,
-            verbose = self.verbose,
+            name=name,
+            jobs=self.jobs,
+            assets=assets,
+            timeout=self.timeout,
+            fail_fast=self.fail_fast,
+            quiet=self.quiet,
+            vmaf_binary=vmaf_binary,
+            resources_dir=resources_dir,
+            output_dir=output_dir,
+            keep_files=self.keep_files,
+            verbose=self.verbose,
         )
+
 
 class Soothe:
     """Main class for soothe"""
@@ -129,8 +131,9 @@ class Soothe:
                         asset_list = AssetList.from_json_file(
                             os.path.join(root, f),
                             self.resources_dir)
-                        if asset_list.content.name in [ a.content.name for a in self.asset_lists ]:
-                            raise RuntimeError(f'Repeated asset list with '\
+                        if asset_list.content.name in [a.content.name for a
+                                                       in self.asset_lists]:
+                            raise RuntimeError(f'Repeated asset list with '
                                                f'"{asset_list.content.name}"')
                         self.asset_lists.append(asset_list)
                     except (OSError, ValueError, LookupError) as ex:
@@ -138,7 +141,12 @@ class Soothe:
         if len(self.asset_lists) == 0:
             raise RuntimeError(f'No assets found in "{self.assets_dir}"')
 
-    def download_assets(self, asset_lists: List[str], jobs: int, retries: int) -> None:
+    def download_assets(
+            self,
+            asset_lists: List[str],
+            jobs: int,
+            retries: int
+    ) -> None:
         """Download a group of assets"""
         self._load_asset_lists()
         download_asset_lists = get_matches_from_list(
@@ -154,7 +162,10 @@ class Soothe:
                 verify=True,
                 retries=retries)
 
-    def _generate_assets(self, params: RunParams) -> Tuple[str, List[Tuple[str, Asset]]]:
+    def _generate_assets(
+            self,
+            params: RunParams
+    ) -> Tuple[str, List[Tuple[str, Asset]]]:
         """
         Generate the list of assets given a set of asset lists, filtering
         the explicit assets and removing the skipped assets.
@@ -167,16 +178,19 @@ class Soothe:
             "asset lists",
         )
 
-        assets = [ (asset_list.name(), asset) for asset_list in asset_lists
-                   for asset in asset_list.assets() ]
+        assets = [(asset_list.name(), asset) for asset_list in asset_lists
+                  for asset in asset_list.assets()]
         if params.assets_names:
-            assets = [asset for asset in assets if asset[1].name in params.assets_names ]
+            assets = [asset for asset in assets
+                      if asset[1].name in params.assets_names]
         if params.skip_assets_names:
-            assets = [ asset for asset in assets if asset[1].name not in params.skip_assets_names ]
+            assets = [asset for asset in assets
+                      if asset[1].name not in params.skip_assets_names]
         if len(assets) == 0:
             raise RuntimeError('No defined assets to tests')
 
-        test_suite_name = '-'.join([ asset_list.name() for asset_list in asset_lists ])
+        test_suite_name = '-'.join([asset_list.name()
+                                    for asset_list in asset_lists])
 
         return (test_suite_name, assets)
 

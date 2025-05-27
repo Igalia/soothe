@@ -21,8 +21,9 @@
 
 import shutil
 
-from soothe.codec import Codec
-from soothe.encoder import Encoder, register_encoder
+from ..codec import Codec
+from ..encoder import Encoder, register_encoder
+
 
 @register_encoder
 class Dummy(Encoder):
