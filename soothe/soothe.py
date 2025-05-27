@@ -56,7 +56,7 @@ class RunParams:  # pylint: disable=too-many-instance-attributes
     # summary_output: str
     # summary_formart: str
 
-    def as_test_suite_params(
+    def as_test_suite_params(  # noqa: E501 pylint: disable=too-many-positional-arguments disable=too-many-arguments
             self,
             name: str,
             assets: List[Tuple[str, Asset]],
@@ -211,7 +211,6 @@ class Soothe:
         if len(encoders) == 0:
             raise RuntimeError('No encoders to test')
 
-
         (test_suite_name, assets) = self._generate_assets(params)
         test_suite = TestSuite(
             params.as_test_suite_params(
@@ -234,7 +233,7 @@ class Soothe:
         self._load_asset_lists()
         print('\nList of available asset lists:')
         if asset_lists:
-            asset_lists = [ x.lower() for x in asset_lists ]
+            asset_lists = [x.lower() for x in asset_lists]
 
         for asset_list in self.asset_lists:
             if asset_lists and asset_list.name().lower() not in asset_lists:

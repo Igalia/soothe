@@ -34,8 +34,9 @@ from .utils import normalize_path, run_command_with_output
 
 
 @dataclass
-class Params:
+class Params:  # pylint: disable=too-many-instance-attributes
     """Params for a test"""
+
     encoder: Encoder
     asset: Tuple[str, Asset]
     vmaf_binary: Path
@@ -114,7 +115,7 @@ class Test:  # pylint: disable=too-few-public-methods
         except TimeoutExpired:
             result.encode_result = EncodeTestResult.TIMEOUT
             raise
-        except:
+        except:  # noqa: E722
             result.encode_result = EncodeTestResult.ERROR
             raise
         finally:
@@ -136,7 +137,7 @@ class Test:  # pylint: disable=too-few-public-methods
                     verbose=self.params.verbose,
                 )
                 result.vmaf_time = perf_counter() - start
-            except:
+            except:  # noqa: E722
                 result.vmaf_result = EncodeTestResult.ERROR
                 raise
             finally:
