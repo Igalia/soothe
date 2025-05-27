@@ -81,7 +81,8 @@ class Main:  # pylint: disable=too-few-public-methods
             '--assets-dir',
             help=(
                 'set directory where assets will be read from, '
-                f"multiple directories are supported with OS path separator ({os.pathsep})"
+                'multiple directories are supported with OS path separator '
+                f"({os.pathsep})"
             ),
             default=self.assets_dir,
         )
