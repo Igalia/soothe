@@ -28,12 +28,13 @@ from shutil import rmtree
 from time import perf_counter
 from typing import List, Tuple
 
-from soothe.asset import Asset
-from soothe.encoder import Encoder
-from soothe.test import Test, Params as TestParams, Result as TestResult
+from .asset import Asset
+from .encoder import Encoder
+from .test import Test, Params as TestParams, Result as TestResult
+
 
 @dataclass
-class Params: # pylint: disable=too-many-instance-attributes
+class Params:  # pylint: disable=too-many-instance-attributes
     """Params for a test suite"""
     name: str
     jobs: int
@@ -47,7 +48,8 @@ class Params: # pylint: disable=too-many-instance-attributes
     keep_files: bool = False
     verbose: bool = False
 
-class TestSuite: # pylint: disable=too-few-public-methods
+
+class TestSuite:  # pylint: disable=too-few-public-methods
     """
     Test suite class.
     A test suite is one encoder encoding multiple assets
@@ -64,14 +66,14 @@ class TestSuite: # pylint: disable=too-few-public-methods
         for asset in self.params.assets:
             tests.append(
                 Test(TestParams(
-                    encoder = encoder,
-                    asset = asset,
-                    vmaf_binary = self.params.vmaf_binary,
-                    resources_dir = self.params.resources_dir,
-                    output_dir = self.params.output_dir,
-                    timeout = self.params.timeout,
-                    keep_files = self.params.keep_files,
-                    verbose = self.params.verbose,
+                    encoder=encoder,
+                    asset=asset,
+                    vmaf_binary=self.params.vmaf_binary,
+                    resources_dir=self.params.resources_dir,
+                    output_dir=self.params.output_dir,
+                    timeout=self.params.timeout,
+                    keep_files=self.params.keep_files,
+                    verbose=self.params.verbose,
                 ))
             )
 
@@ -83,7 +85,7 @@ class TestSuite: # pylint: disable=too-few-public-methods
         test.run(test_result)
         return test_result
 
-    def _run_test_suite_in_parallel (self, tests: List[Test]) -> None:
+    def _run_test_suite_in_parallel(self, tests: List[Test]) -> None:
         """Run the tests suite in parallel"""
 
         test_results: List[TestResult] = []
@@ -115,13 +117,15 @@ class TestSuite: # pylint: disable=too-few-public-methods
             print(f'Skipping encoder {encoder.name} because it cannot run')
             return
 
-        self.params.output_dir = os.path.join(self.params.output_dir, self.params.name)
+        self.params.output_dir = os.path.join(self.params.output_dir,
+                                              self.params.name)
         if os.path.exists(self.params.output_dir):
             rmtree(self.params.output_dir)
         os.makedirs(self.params.output_dir)
 
         tests = self._generate_tests(encoder)
 
-        print(f'Running {self.params.name} [{len(tests)} tests] for encoder {encoder.name()}')
+        print(f'Running {self.params.name} [{len(tests)} tests] for encoder '
+              f'{encoder.name()}')
         self._run_test_suite_in_parallel(tests)
         print(f'Ran {self.num_results} tests in {self.time:.3f} secs\n')

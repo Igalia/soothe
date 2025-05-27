@@ -37,6 +37,7 @@ from typing import Any, List, Optional, Sequence
 
 download_lock = Lock()
 
+
 def download(url: str, dest_dir: str, max_retries: int = 5) -> None:
     """Downloads a file to a directory with a mutex lock to avoid conflicts and
     retries with exponential backoff"""
@@ -58,6 +59,7 @@ def download(url: str, dest_dir: str, max_retries: int = 5) -> None:
         if done:
             break
 
+
 def file_checksum(path: str) -> str:
     """Calculates checksum of a file reading chunks of 64K"""
     md5 = hashlib.md5()
@@ -67,6 +69,7 @@ def file_checksum(path: str) -> str:
             md5.update(chunk)
             chunk = f.read(65536)
     return md5.hexdigest()
+
 
 def run_command(
         command: List[str],
@@ -92,6 +95,7 @@ def run_command(
         # Developer experience improvement (facilitates copy/paste)
         ex.cmd = " ".join(ex.cmd)
         raise ex
+
 
 def run_command_with_output(
         command: List[str],
@@ -135,6 +139,7 @@ def run_command_with_output(
         ex.cmd = " ".join(ex.cmd)
         raise ex
 
+
 def normalize_binary_cmd(cmd: str) -> str:
     """Return the OS-form binary"""
     if platform.system() == "Windows":
@@ -143,31 +148,38 @@ def normalize_binary_cmd(cmd: str) -> str:
         return cmd.replace(".exe", "")
     return cmd
 
+
 def normalize_path(path: str) -> str:
     """Normalize the path to make it Unix-like"""
     if platform.system() == "Windows":
         return path.replace("\\", "/")
     return path
 
-class NamedClass(ABC): # pylint: disable=too-few-public-methods
+
+class NamedClass(ABC):  # pylint: disable=too-few-public-methods
     """Abstract class for classes with name"""
     @abstractmethod
     def name(self) -> str:
         """Name of the class"""
         raise NotImplementedError
 
+
 def get_matches_from_list(
         in_list: Optional[List[str]],
         check_list: Sequence[NamedClass],
         name: str
 ) -> Sequence[Any]:
-    """Function that gets a list of objects with the name specified by in_list from check_list"""
+    """
+    Function that gets a list of objects with the name specified by in_list
+    from check_list
+    """
     if in_list:
-        in_list_names = { x.lower() for x in in_list }
-        check_list_names = { x.name().lower() for x in check_list }
+        in_list_names = {x.lower() for x in in_list}
+        check_list_names = {x.name().lower() for x in check_list}
         matches = in_list_names & check_list_names
         if len(matches) != len(in_list):
-            sys.exit(f"No {name} found for: {', '.join(in_list_names - check_list_names)}")
+            sys.exit(f"No {name} found for: "
+                     f"{', '.join(in_list_names - check_list_names)}")
 
-        return [ x for x in check_list if x.name().lower() in matches ]
+        return [x for x in check_list if x.name().lower() in matches]
     return check_list

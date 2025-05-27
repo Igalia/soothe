@@ -28,9 +28,10 @@ from subprocess import TimeoutExpired
 from time import perf_counter
 from typing import Optional, Tuple
 
-from soothe.asset import Asset
-from soothe.encoder import Encoder
-from soothe.utils import normalize_path, run_command_with_output
+from .asset import Asset
+from .encoder import Encoder
+from .utils import normalize_path, run_command_with_output
+
 
 @dataclass
 class Params:
@@ -44,6 +45,7 @@ class Params:
     keep_files: bool = False
     verbose: bool = False
 
+
 class EncodeTestResult(Enum):
     """Encode test result"""
 
@@ -52,6 +54,7 @@ class EncodeTestResult(Enum):
     FAIL = "Fail"
     TIMEOUT = "Timeout"
     ERROR = "Error"
+
 
 @dataclass
 class Result:
@@ -68,13 +71,14 @@ class Result:
     def __str__(self):
         s = f'{self.encoder_name} — {self.asset_fname} '
         if self.encode_result is not EncodeTestResult.SUCCESS:
-            return  f'{s} → Encode {self.encode_result.value}'
+            return f'{s} → Encode {self.encode_result.value}'
         if self.vmaf_result is not EncodeTestResult.SUCCESS:
             return f'{s} → VMAF {self.vmaf_result.value}'
         time = self.encode_time + self.vmaf_time
         return f'{s} [{time:.3f}s] → {self.vmaf_score:.5f}'
 
-class Test: # pylint: disable=too-few-public-methods
+
+class Test:  # pylint: disable=too-few-public-methods
     """Test class"""
 
     def __init__(self, params: Params):

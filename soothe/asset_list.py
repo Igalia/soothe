@@ -28,8 +28,9 @@ from dataclasses import dataclass
 from multiprocessing import Pool
 from typing import Any, Dict, List, Type
 
-from soothe import utils
-from soothe.asset import Asset
+from .utils import NamedClass, file_checksum, download
+from .asset import Asset
+
 
 @dataclass
 class DownloadWork:
@@ -40,6 +41,7 @@ class DownloadWork:
     retries: int
     asset: Asset
 
+
 @dataclass
 class Content:
     """Class for keeping track of an asset list"""
@@ -47,7 +49,8 @@ class Content:
     description: str
     assets: Dict[str, Asset]
 
-class AssetList(utils.NamedClass):
+
+class AssetList(NamedClass):
     """Asset list class"""
 
     def __init__(
@@ -82,36 +85,37 @@ class AssetList(utils.NamedClass):
             os.makedirs(dest_dir, exist_ok=True)
         dest_path = os.path.join(dest_dir, os.path.basename(asset.source))
         if ctx.verify and os.path.exists(dest_path):
-            checksum = utils.file_checksum(dest_path)
+            checksum = file_checksum(dest_path)
             if checksum == asset.checksum:
                 return
         print(f'\tDownloading asset {asset.name} to {dest_dir}')
-        # Catch the exception that download may throw to make sure pickle can serialize it properly
+        # Catch the exception that download may throw to make sure pickle can
+        # serialize it properly
         # This avoids:
-        # Error sending result: '<multiprocessing.pool.ExceptionWithTraceback object ...>'.
+        # Error sending result: '<multiprocessing.pool.ExceptionWithTraceback>'
         # Reason: 'TypeError("cannot pickle '_io.BufferedReader' object")'
         for i in range(ctx.retries):
             try:
                 exception_str = ""
-                utils.download(asset.source, dest_dir)
+                download(asset.source, dest_dir)
             except urllib.error.URLError as ex:
-                exception_str = f'Unable to download {asset.source} to {dest_dir}: '\
-                    f'{str(ex)} (retry count={i + 1})'
+                exception_str = f'Unable to download {asset.source} to '\
+                    f'{dest_dir}: {str(ex)} (retry count={i + 1})'
                 continue
             except OSError as ex:
-                raise RuntimeError(f'Unable to store {asset.source} to {dest_dir}: '\
-                                   f'{str(ex)}') from ex
+                raise RuntimeError(f'Unable to store {asset.source} to '
+                                   f'{dest_dir}: {str(ex)}') from ex
             break
 
         if exception_str:
             raise RuntimeError(exception_str)
 
         if asset.checksum != "__skip__":
-            checksum = utils.file_checksum(dest_path)
+            checksum = file_checksum(dest_path)
             if asset.checksum != checksum:
                 raise RuntimeError(
-                    f"Checksum error for test vector '{asset.name}': '{checksum}' instead of "
-                    f"'{asset.checksum}'")
+                    f"Checksum error for test vector '{asset.name}': "
+                    f"'{checksum}' instead of '{asset.checksum}'")
 
     def assets(self) -> List[Asset]:
         """Return the list of assets contained"""
@@ -138,7 +142,8 @@ class AssetList(utils.NamedClass):
 
             downloads = []
 
-            print(f'Downloading test suite {self.content.name} use {jobs} parallel jobs')
+            print(f'Downloading test suite {self.content.name} use {jobs} '
+                  f'parallel jobs')
             for asset in self.assets():
                 dwork = DownloadWork(
                     out_dir,
@@ -165,5 +170,6 @@ class AssetList(utils.NamedClass):
 
     def __str__(self) -> str:
         return (
-            f'{self.content.name}: {self.content.description} — {len(self.content.assets)} assets'
+            f'{self.content.name}: {self.content.description} — '
+            f'{len(self.content.assets)} assets'
         )

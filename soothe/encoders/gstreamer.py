@@ -25,14 +25,15 @@ import subprocess
 
 from functools import lru_cache
 
-from soothe.codec import Codec
-from soothe.encoder import Encoder, register_encoder
-from soothe.utils import normalize_binary_cmd, run_command
+from ..codec import Codec
+from ..encoder import Encoder, register_encoder
+from ..utils import normalize_binary_cmd, run_command
 
 PIPELINE_TPL = "{} --eos-on-shutdown --no-fault filesrc location={} ! "\
     "y4mdec ! videoconvert dither=none ! "\
     "{} ! decodebin ! "\
     "videoconvert dither=none ! y4menc ! filesink location={}"
+
 
 class GStreamer(Encoder):
     """Base class for GStreamer encoders"""
@@ -45,9 +46,10 @@ class GStreamer(Encoder):
 
     def __init__(self) -> None:
         super().__init__()
-        self.encoder_name = f'{self.provider}-{self.codec.value}-{self.variant}-{self.api}-Gst1.0'
-        self.description = f'{self.provider} {self.codec.value} {self.variant} {self.api}'\
-            ' encoder for GStreamer 1.0'
+        self.encoder_name = f'{self.provider}-{self.codec.value}-'\
+            f'{self.variant}-{self.api}-Gst1.0'
+        self.description = f'{self.provider} {self.codec.value} '\
+            f'{self.variant} {self.api} encoder for GStreamer 1.0'
         self.cmd = normalize_binary_cmd('gst-launch-1.0')
 
     def _construct_pipeline(
@@ -68,7 +70,8 @@ class GStreamer(Encoder):
         """Check if GStreamer decoder is valid (better than gst-inspect)"""
         try:
             binary = normalize_binary_cmd('gst-launch-1.0')
-            pipeline = f"{binary} --no-fault appsrc num-buffers=0 ! {self.encoder_bin} ! fakesink"
+            pipeline = f"{binary} --no-fault "\
+                f"appsrc num-buffers=0 ! {self.encoder_bin} ! fakesink"
             run_command(shlex.split(pipeline), verbose=verbose)
         except subprocess.SubprocessError:
             return False
@@ -86,6 +89,7 @@ class GStreamer(Encoder):
         pipeline = self._construct_pipeline(input_file, output_file)
         run_command(shlex.split(pipeline), timeout=timeout, verbose=verbose)
 
+
 @register_encoder
 class GStreamerVaH264MainEncoder(GStreamer):
     """GStreamer H.264 Main VA encoder"""
@@ -93,6 +97,7 @@ class GStreamerVaH264MainEncoder(GStreamer):
     encoder_bin = " vah264enc ! video/x-h264, profile=main "
     variant = "main"
     api = "VA"
+
 
 @register_encoder
 class GStreamerVaH264HighEncoder(GStreamer):
@@ -111,6 +116,7 @@ class GStreamerVaH264ConstrainedEncoder(GStreamer):
     variant = "constrained-baseline"
     api = "VA"
 
+
 @register_encoder
 class GStreamerVaH264LpMainEncoder(GStreamer):
     """GStreamer H.264 low power Main VA encoder"""
@@ -118,6 +124,7 @@ class GStreamerVaH264LpMainEncoder(GStreamer):
     encoder_bin = " vah264lpenc ! video/x-h264, profile=main "
     variant = "lp-main"
     api = "VA"
+
 
 @register_encoder
 class GStreamerVaH264LpHighEncoder(GStreamer):
@@ -136,6 +143,7 @@ class GStreamerVaH264LpConstrainedEncoder(GStreamer):
     variant = "lp-constrained-baseline"
     api = "VA"
 
+
 @register_encoder
 class GStreamerVaH265MainEncoder(GStreamer):
     """GStreamer H.265 Main VA encoder"""
@@ -143,6 +151,7 @@ class GStreamerVaH265MainEncoder(GStreamer):
     encoder_bin = " vah265enc ! video/x-h265, profile=main "
     variant = "main"
     api = "VA"
+
 
 @register_encoder
 class GStreamerVaH265LpMainEncoder(GStreamer):
