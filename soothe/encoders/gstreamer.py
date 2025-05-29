@@ -73,7 +73,11 @@ class GStreamer(Encoder):
             pipeline = f"{binary} --no-fault "\
                 f"appsrc num-buffers=0 ! {self.encoder_bin} ! fakesink"
             run_command(shlex.split(pipeline), verbose=verbose)
-        except subprocess.SubprocessError:
+        except FileNotFoundError as e:
+            print("Executable not found:", e)
+            return False
+        except subprocess.CalledProcessError as e:
+            print("Process failed:", e)
             return False
         return True
 
