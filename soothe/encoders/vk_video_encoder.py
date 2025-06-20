@@ -30,13 +30,15 @@ from ..codec import Codec
 from ..encoder import Encoder, register_encoder
 from ..utils import normalize_binary_cmd, run_command
 
-VKVS_TPL = "{} -c {} -i {} -o {} --profile {}"
+VKVS_ENC_TPL = "{} -c {} -i {} -o {} --profile {}"
+VKVS_DEC_TPL = "{} -i {} -o {} --y4m --noPresent --enablePostProcessFilter 0"
 
 
 class VKVS(Encoder):
     """Base class for Vulkan Video Samples encoders"""
 
-    cmd: str
+    enc_cmd: str
+    dec_cmd: str
     provider = 'VKVS'
     variant: str
 
@@ -46,7 +48,8 @@ class VKVS(Encoder):
             f'{self.variant}'
         self.description = f'{self.provider} {self.codec.value}'\
             f' {self.variant} encoder'
-        self.cmd = normalize_binary_cmd('vk-video-enc-test')
+        self.enc_cmd = normalize_binary_cmd('vk-video-enc-test')
+        self.dec_cmd = normalize_binary_cmd('vk-video-dec-test')
 
     def codec_name(self, codec: Codec) -> str:
         """Generate the codec name"""
@@ -58,25 +61,37 @@ class VKVS(Encoder):
             return 'av1'
         return 'unknown'
 
-    def _construct_cmd(
+    def _construct_enc_cmd(
             self,
             input_file: str,
             output_file: str,
     ) -> str:
         """Generate the VKVS command used to encode the asset"""
-        return VKVS_TPL.format(
-            self.cmd,
+        return VKVS_ENC_TPL.format(
+            self.enc_cmd,
             self.codec_name(self.codec),
             input_file,
             output_file,
             self.variant
         )
 
+    def _construct_dec_cmd(
+            self,
+            input_file: str,
+            output_file: str,
+    ) -> str:
+        """Generate the VKVS command used to decode the asset"""
+        return VKVS_DEC_TPL.format(
+            self.dec_cmd,
+            input_file,
+            output_file
+        )
+
     @lru_cache(maxsize=128)
     def check(self, verbose: bool) -> bool:
         """Check if VKVS decoder is valid"""
         try:
-            enc_cmd = f"{self.cmd} --help"
+            enc_cmd = f"{self.enc_cmd} --help"
             run_command(shlex.split(enc_cmd), verbose=verbose)
         except FileNotFoundError as e:
             print("Executable not found:", e)
@@ -94,8 +109,11 @@ class VKVS(Encoder):
             verbose: bool,
     ):
         """Encodes input_file in output_file"""
-        enc_cmd = self._construct_cmd(input_file, output_file)
+        encoded_file = f"{output_file}.enc"
+        enc_cmd = self._construct_enc_cmd(input_file, encoded_file)
         run_command(shlex.split(enc_cmd), timeout=timeout, verbose=verbose)
+        dec_cmd = self._construct_dec_cmd(encoded_file, output_file)
+        run_command(shlex.split(dec_cmd), timeout=timeout, verbose=verbose)
 
 
 @register_encoder

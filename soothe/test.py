@@ -20,6 +20,7 @@
 """Test module"""
 
 import os
+from shutil import rmtree
 
 from dataclasses import dataclass
 from enum import Enum
@@ -147,7 +148,8 @@ class Test:  # pylint: disable=too-few-public-methods
                 except (IndexError, ValueError):
                     result.vmaf_result = EncodeTestResult.FAIL
 
-        if not self.params.keep_files \
-           and os.path.exists(output_filepath) \
-           and os.path.isfile(output_filepath):
-            os.remove(output_filepath)
+        if not self.params.keep_files:
+            output_dir = os.path.dirname(output_filepath)
+            print(output_dir)
+            if os.path.exists(output_dir) and os.path.isdir(output_dir):
+                rmtree(output_dir)
