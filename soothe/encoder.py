@@ -1,7 +1,7 @@
 # Soothe - testing framework for encoders quality
 # Copyright (C) 2020, Fluendo, S.A.
 #  Author: Pablo Marcos Oltra <pmarcos@fluendo.com>, Fluendo, S.A.
-# Copyright (C) 2025, Igalia, S.A.
+# Copyright (C) 2025, Igalia, S.L.
 #  Author: Victor Jaquez <vjaquez@igalia.com>
 #
 # This library is free software; you can redistribute it and/or
